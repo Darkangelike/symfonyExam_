@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}List of movies I have seen:{% endblock %}
+
+{% block body %}
+<style>
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+</style>
+
+<div class="example-wrapper">
+
+    <div class="card-group text-center">
+        {% for movie in movies %}
+        <div class="card" style="width: 22rem;">
+
+{#            BUTTONS DIV #}
+
+            {% if app.user == movie.user %}
+            <div class="card-header">
+                <div style="float:right">
+                    <a href="{{ path("movie_edit", {id:movie.id}) }}">
+                        <button class="btn btn-info btn-sm">Edit</button></a>
+                    <a href="{{ path("movie_remove", {id:movie.id}) }}">
+                        <button class="btn btn-danger btn-sm">X</button></a>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="card-header">
+                    <h2>{{ movie.name }}</h2>
+                {{ movie.yearReleased|date("Y") }} <br>
+                {{ movie.director }}
+            </div>
+            <div class="card-header">
+                Added by {{ movie.user.username }}
+            </div>
+            <div class="card-body">
+                <p>
+                    {{ movie.description }}
+                </p>
+                <a href="{{ path("movie_show", {id:movie.id}) }}">
+                    <button class="btn btn-success">Read more</button>
+                </a>
+            </div>
+
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

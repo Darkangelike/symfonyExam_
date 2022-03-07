@@ -1,0 +1,151 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}About {{ movie.name }}{% endblock %}
+
+{% form_theme form 'bootstrap_5_layout.html.twig' %}
+
+{% block body %}
+    <style>
+        .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+        .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+    </style>
+
+    <div class="example-wrapper">
+
+        <div class="d-flex justify-content-around">
+{#        Start of CARD GROUP #}
+            <div class="card-group text-center">
+
+{#            CARD for the MOVIE #}
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>{{ movie.name }}</h2>
+                            {{ movie.yearReleased|date("Y") }} <br>
+                            {{ movie.director }}
+
+{#                            LIKE BUTTONS #}
+                            {% if app.user %}
+                                <br>
+                                <a href="{{ path("movie_like", {id:movie.id}) }}"><i class="fas
+                                fa-thumbs-up"></i></a>
+                                <span class="count">{{movie.likes|length}}</span>
+
+                            {% else %}
+
+                                <i class="fas fa-thumbs-up"></i> ({{ movie.likes|length }})
+
+                            {% endif %}
+{#                            END OF LIKE BUTTONS #}
+
+                        </div>
+                        <div class="card-body">
+                            <p>
+                                {{ movie.description }}
+                            </p>
+                        </div>
+
+                    </div>
+{#                END OF MOVIE CARD#}
+
+{#                CARD for IMPRESSIONS#}
+
+                    <div class="card">
+                        <div class="card-header"><h2>Impressions :</h2></div>
+                {% if movie.impressions|length!=0 %}
+
+
+{#                        IMPRESSIONS LOOP #}
+                    {% for impression in movie.impressions %}
+                            {% if app.user == impression.user %}
+                        <div class="card-header">
+
+                            <a href="{{ path("impression_edit", {id:impression.id}) }}">
+                                <button class="btn btn-info btn-sm">Edit</button></a>
+                            <a href="{{ path("impression_remove", {id:impression.id}) }}">
+                                <button class="btn btn-danger btn-sm">X</button></a>
+                        </div>
+                            {% endif %}
+                        <div class="card-header" style="font-size: 10px">
+                            <i>Written on {{ impression.createdAt|date("Y-m-d H:i:s") }} by {{ impression.user.username
+                                }}</i>
+
+{#                            LIKE BUTTONS #}
+
+                            {% if app.user %}
+                                <br>
+                                <a href="{{ path("impression_like", {id:impression.id}) }}"><i class="fas
+                                fa-thumbs-up"></i></a> <span class="count">{{impression.likes|length}}</span>
+
+                            {% else %}
+
+                                <i class="fas fa-thumbs-up"></i> ({{ impression.likes|length }})
+
+
+                            {% endif %}
+{#                            END OF LIKE BUTTONS #}
+
+                        </div>
+                        <div class="card-body">
+                            <p>
+                                {{ impression.content }}
+                            </p>
+                        </div>
+                    {% endfor %}
+
+{#                        END OF IMPRESSION LOOP #}
+
+
+                    </div>
+                    <div class="card">
+                        <div class="card-header">Write an impression</div>
+
+                        {% if app.user %}
+                        <div class="card-body">
+
+                            {{ form_start(form) }}
+                            {{ form_row(form.content) }}
+                            <a href="{{ path("movie_show", {id:movie.id}) }}">
+                                <button class="btn btn-info">Add your impression</button>
+                            </a>
+                            {{ form_end(form) }}
+
+                        </div>
+                        {% else %}
+
+                            You need to be logged in to write an impression. <br>
+
+                            <a href="/login">
+                                <button class="btn btn-success">Log in</button></a>
+
+                        {% endif %}
+
+                    </div>
+                {% else %}
+                    <div class="card-body">
+
+                        <p>There are no impressions yet. <br>
+                            Be the first to write one!</p>
+
+                        {% if app.user %}
+
+                        {{ form_start(form) }}
+                        {{ form_label(form.content, 'Your impression :') }}
+                        {{ form_widget(form.content) }}
+                            <button class="mt-4 btn btn-info">Add your impression</button>
+                        {{ form_end(form) }}
+
+                        {% else %}
+
+                            You need to be logged in to write an impression. <br>
+
+                            <a href="/login">
+                                <button class="btn btn-success">Log in</button></a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+                    </div>
+{#                END of IMPRESSIONS CARD#}
+            </div>
+        </div>
+    </div>
+{% endblock %}
